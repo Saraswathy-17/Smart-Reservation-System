@@ -1,0 +1,40 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# Local databases
+*.db
+*.sqlite3
+
+# Environment variables & secrets (NEVER COMMIT SECRETS)
+.env
+.env.*
+!.env.example
+*.local
+
+# Node.js & Frontend dependencies & build artifacts
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+dist-ssr/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Scratch scripts & temporary directories
+scratch/
+.system_generated/
+*.log
+*.tmp
+
+# Operating system & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
