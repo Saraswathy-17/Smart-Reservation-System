@@ -175,10 +175,15 @@ async def get_google_auth_config():
     is_configured = bool(settings.GOOGLE_CLIENT_ID and settings.GOOGLE_CLIENT_SECRET)
 
     auth_url = None
+    redirect_uri = None
     if is_configured:
+        redirect_uri = settings.GOOGLE_REDIRECT_URI or "http://localhost:5173/auth/google/callback"
+        if not redirect_uri.endswith("/auth/google/callback"):
+            redirect_uri = redirect_uri.rstrip("/") + "/auth/google/callback"
+
         params = {
             "client_id": settings.GOOGLE_CLIENT_ID,
-            "redirect_uri": settings.GOOGLE_REDIRECT_URI or "http://localhost:5173/auth/google/callback",
+            "redirect_uri": redirect_uri,
             "response_type": "code",
             "scope": "openid email profile",
             "access_type": "online",
@@ -189,7 +194,7 @@ async def get_google_auth_config():
     return GoogleOAuthConfig(
         enabled=is_configured,
         client_id=settings.GOOGLE_CLIENT_ID if is_configured else None,
-        redirect_uri=settings.GOOGLE_REDIRECT_URI if is_configured else None,
+        redirect_uri=redirect_uri,
         auth_url=auth_url,
     )
 
@@ -215,7 +220,9 @@ async def google_auth_callback(
             detail="Missing OAuth authorization code or ID token.",
         )
 
-    redirect_uri = settings.GOOGLE_REDIRECT_URI or (callback_in.redirect_uri.rstrip('/') if callback_in.redirect_uri else "http://localhost:5173/auth/google/callback")
+    redirect_uri = callback_in.redirect_uri or settings.GOOGLE_REDIRECT_URI or "http://localhost:5173/auth/google/callback"
+    if not redirect_uri.endswith("/auth/google/callback"):
+        redirect_uri = redirect_uri.rstrip("/") + "/auth/google/callback"
 
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:

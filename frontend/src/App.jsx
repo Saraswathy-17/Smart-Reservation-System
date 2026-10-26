@@ -39,7 +39,7 @@ function AppContent() {
       });
 
       // Maintain redirect URI consistency with Google Cloud console registration
-      const redirectUri = window.location.origin + (window.location.pathname === '/' ? '' : window.location.pathname);
+      const redirectUri = window.location.origin + '/auth/google/callback';
       loginWithGoogle(code, redirectUri)
         .then((loggedInUser) => {
           setOauthStatus(null);
