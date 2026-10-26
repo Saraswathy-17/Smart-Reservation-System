@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const DEFAULT_URL = isLocal ? 'http://localhost:8000/api/v1' : 'https://smart-reservation-system-edo9.onrender.com/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || DEFAULT_URL;
 
 async function request(endpoint, options = {}) {
   const token = localStorage.getItem('smart_res_token');
@@ -13,7 +15,17 @@ async function request(endpoint, options = {}) {
     headers,
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  } catch (err) {
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && API_BASE_URL.includes('localhost')) {
+      throw new Error(
+        'Backend Unreachable: The site is deployed online, but VITE_API_URL is pointing to localhost. Please deploy your backend (e.g. Render/Railway) and configure VITE_API_URL in Vercel settings, or run both locally on http://localhost:5173.'
+      );
+    }
+    throw new Error(err.message || 'Network error: Failed to connect to server.');
+  }
 
   if (response.status === 204) {
     return null;

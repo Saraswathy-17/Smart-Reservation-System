@@ -215,7 +215,7 @@ async def google_auth_callback(
             detail="Missing OAuth authorization code or ID token.",
         )
 
-    redirect_uri = callback_in.redirect_uri or settings.GOOGLE_REDIRECT_URI or "http://localhost:5173/auth/google/callback"
+    redirect_uri = settings.GOOGLE_REDIRECT_URI or (callback_in.redirect_uri.rstrip('/') if callback_in.redirect_uri else "http://localhost:5173/auth/google/callback")
 
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
