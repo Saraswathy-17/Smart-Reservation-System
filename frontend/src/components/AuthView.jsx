@@ -339,7 +339,7 @@ export default function AuthView({ initialMode = 'login', onSuccess, onCancel })
               <input
                 type="tel"
                 className="form-input"
-                placeholder="+1 (555) 000-0000"
+                placeholder="e.g. +91 98765 43210"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
